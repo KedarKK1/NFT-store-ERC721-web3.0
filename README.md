@@ -12,6 +12,7 @@ python -m SimpleHTTPSever
 or
 simply open live share http server
 ```
+Check by writing in console => await contract.methods.name().call() -> 'https://mynft.com/kedar/tokens/'
 
 ## Features
 

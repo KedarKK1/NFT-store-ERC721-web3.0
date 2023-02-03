@@ -11,7 +11,7 @@
 <body>
     <div>
         <p>Wallet address- <span id="wallet-address"></span></p>
-        <p>Current Count- <span id="current-count">0</span></p>
+        <!-- <p>Current Count- <span id="current-count">0</span></p> -->
         <button id="increase-count">Increase Count or Mint NFT</button>
     </div>
 
@@ -522,10 +522,14 @@
                 document.getElementById('wallet-address').textContent = account;
 
                 contract = new web3.eth.Contract(ABI, ADDRESS);
-                updateCurrentCount();
+                // updateCurrentCount();
                 document.getElementById('increase-count').onclick = () => {
-                    increaseCurrentCount();
+                    // calling safeMint function from smart contract with a value of 10^(-16) wei or 10 finney or 0.01 ethers
+                    contract.methods.safeMint(account).send({ from: account, value: "10000000000000000" })
                 };
+                // document.getElementById('increase-count').onclick = () => {
+                //     increaseCurrentCount();
+                // };
             }
         })();
 
