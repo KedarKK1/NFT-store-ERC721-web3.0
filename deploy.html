@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploying Counter to Polygon</title>
+    <!-- Link to web3 CDN -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>  -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/web3modal@1.9.0/dist/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.1/dist/umd/index.min.js"></script>
+</head>
+<body>
+    <div>
+        <p><button id="conn">Connect</button></p>
+        <p>Wallet address- <span id="wallet-address"></span></p>
+        <!-- <p>Current Count- <span id="current-count">0</span></p> -->
+        <p>Bytecode - <input type="text" id="bytecode-input"></p>
+        <p>ABI - <textarea rows="4" type="text" id="abi-input"> </textarea></p>
+        <button id="deploy-sm">Deploy Smart Contract</button>
+    </div>
+
+    <script type="text/javascript">
+        // 1. Connect metamask to our site. Get the user's addresss
+        var account = null;
+        var contract = null;
+
+        const connect = async () => {
+            const Web3Modal = window.Web3Modal.default;
+            const providerOptions = {
+              walletconnect: {
+                package: WalletConnectProvider.default, // required
+                options: {
+                  rpc: {
+                    1: "https://cloudflare-eth.com/", // https://ethereumnodes.com/
+                    137: "https://polygon-rpc.com/"
+                  }
+                }
+              }
+            };
+      
+            window.web3Modal = new Web3Modal({
+              // network: "mainnet", // optional
+              cacheProvider: false, // optional
+              providerOptions // required
+            });
+      
+            const provider = await window.web3Modal.connect();
+      
+            window.web3 = new Web3(provider); // initialize web3 with metamask's RPC. We're on the same network as metamask's
+            var accounts  = await web3.eth.getAccounts(); // get all connected accounts
+            account = accounts[0]; // get the primary account
+          }
+
+        document.getElementById('conn').onclick = async () => {
+            connect();
+        }
+
+          // 2. Deploy the bytecode : 
+        const deploy = async (abi, bytecode) => {
+            var deployedContract = new web3.eth.Contract(abi).deploy({
+                data: bytecode,
+                arguments: [], // arguments of constructor in Smart Contract goes here
+            }).send({
+                from: account,
+            })
+
+            console.log("Address of Contract - ", deployedContract.options.address);
+
+            return deployedContract.options.address;
+        }
+
+        // on clicking deploy this deploy button gets called
+        document.getElementById('deploy-sm').onclick = async () => {
+            // calling deploy function from above 
+            // console.log('abi',typeof JSON.parse(document.getElementById('abi-input').value));
+            // console.log('0x + bytecode"s object',document.getElementById('bytecode-input').value);
+            await deploy(JSON.parse(document.getElementById('abi-input').value), document.getElementById('bytecode-input').value);
+        };  
+
+        // 3. Interact with Smart Contract
+        // const updateCurrentCount = async () => {
+        //     if(contract){
+        //         var count = await contract.methods.count().call();
+        //         // console.log(" value of contract is - ", count);
+        //         document.getElementById("current-count").textContent = count;
+        //     }
+        // }
+
+        // const increaseCurrentCount = async () => {
+        //     if(contract){
+        //         var transaction = await contract.methods.increment().send({ from: account });
+        //         window.location.reload();
+        //     }
+        // }
+    </script>
+</body>
+</html>
