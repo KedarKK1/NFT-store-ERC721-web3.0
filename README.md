@@ -2,6 +2,17 @@
 
 NFT store for web3.0. Used openzeppelin ERC721
 
+## NFT Address -
+
+0x98cA1117af4321F67799817ECf1f6F34C6D06Dd4
+
+for running server type - 
+```
+python -m SimpleHTTPSever 
+or
+simply open live share http server
+```
+
 ## Features
 
 1. User can <b>MINT NFTs</b>. (add your wallet address & click on \_smartMin. )
